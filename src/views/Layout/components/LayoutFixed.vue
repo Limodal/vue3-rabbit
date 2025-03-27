@@ -1,8 +1,10 @@
 <script setup>
 import { useScroll } from '@vueuse/core'
-
+import { useCategoryStore } from '@/stores/category'
 const { y } = useScroll(window)
 
+//使用pinia中的数据
+const categoryStore = useCategoryStore()
 </script>
 
 <template>
@@ -10,12 +12,18 @@ const { y } = useScroll(window)
     <div class="container">
       <RouterLink class="logo" to="/" />
       <!-- 导航区域 -->
-
-      <LayoutHeaderUl />
+      <ul class="app-header-nav">
+        <li class="home">
+          <RouterLink to="/">首页</RouterLink>
+        </li>
+        <li class="home" v-for="item in categoryStore.categoryList" :key="item.id">
+          <RouterLink to="/">{{ item.name }}</RouterLink>
+        </li>
+      </ul>
       <div class="right">
         <RouterLink to="/">品牌</RouterLink>
         <RouterLink to="/">专题</RouterLink>
-      </div>
+    </div>
     </div>
   </div>
 </template>
@@ -54,6 +62,36 @@ const { y } = useScroll(window)
     background: url("@/assets/images/logo.png") no-repeat right 2px;
     background-size: 160px auto;
   }
+  .app-header-nav {
+  width: 820px;
+  display: flex;
+  padding-left: 40px;
+  position: relative;
+  z-index: 998;
+
+  li {
+    margin-right: 40px;
+    width: 38px;
+    text-align: center;
+
+    a {
+      font-size: 16px;
+      line-height: 32px;
+      height: 32px;
+      display: inline-block;
+
+      &:hover {
+        color: $xtxColor;
+        border-bottom: 1px solid $xtxColor;
+      }
+    }
+
+    .active {
+      color: $xtxColor;
+      border-bottom: 1px solid $xtxColor;
+    }
+  }
+}
 
   .right {
     width: 220px;
