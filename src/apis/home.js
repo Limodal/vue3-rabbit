@@ -4,6 +4,8 @@ import httpInstance from "@/utils/http";
 
 export function getBannerAPI(params={}){
   // 默认为1   商品为2
+  // 若 params 对象中不存在 distributionSite 属性，那么 distributionSite 会被赋予默认值 '1'若 params 对象中不存在 distributionSite 属性，
+  // 那么 distributionSite 会被赋予默认值 '1'
   const {distributionSite='1'}=params
     return httpInstance({
         url: '/home/banner',

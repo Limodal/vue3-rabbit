@@ -3,21 +3,31 @@ import { getCategoryAPI } from "@/apis/category";
 import { onUpdated } from "vue";
 import { onMounted } from "vue";
 import { ref } from "vue";
-import { useRoute } from "vue-router";
+import { onBeforeRouteUpdate, useRoute } from "vue-router";
 import { getBannerAPI } from '@/apis/home'
+import GoodsItem from "../Home/components/GoodsItem.vue";
 
 
 // 获取数据
 const categoryData =ref({})
 const route =useRoute()
-const getCategory=async()=>{
-  const res=await getCategoryAPI(route.params.id)
+const getCategory=async(id=route.params.id)=>{
+  const res=await getCategoryAPI(id)
   categoryData.value=res.result
 }
 
 onMounted(()=>{
-  onUpdated(()=>getCategory())
+  // onUpdated(()=>getCategory())
+  getCategory()
 })
+// 目标：在路由参数变化的时候   可以把分类数据接口重新发送
+onBeforeRouteUpdate((to)=>{
+  // console.log("路由变化了")
+  // 存在问题：使用最新的路由参数请求最新的分类数据
+  // console.log(to)
+  getCategory(to.params.id)
+})
+
 
 // 获取banner
 const bannerList = ref([])
@@ -44,12 +54,31 @@ onMounted  (() => {
       </div>
       <!-- 轮播图 -->
       <div class="home-banner">
-    <el-carousel height="500px">
-      <el-carousel-item v-for="item in bannerList" :key="item.id">
-        <img :src="item.imgUrl" />
-      </el-carousel-item>
-    </el-carousel>
-  </div>
+        <el-carousel height="500px">
+          <el-carousel-item v-for="item in bannerList" :key="item.id">
+            <img :src="item.imgUrl" />
+          </el-carousel-item>
+        </el-carousel>
+      </div>
+      <div class="sub-list">
+        <h3>全部分类</h3>
+        <ul>
+          <li v-for="i in categoryData.children" :key="i.id">
+            <RouterLink to="/">
+              <img :src="i.picture" />
+              <p>{{ i.name }}</p>
+            </RouterLink>
+          </li>
+        </ul>
+      </div>
+      <div class="ref-goods" v-for="item in categoryData.children" :key="item.id">
+        <div class="head">
+          <h3>- {{ item.name }}-</h3>
+        </div>
+        <div class="body">
+          <GoodsItem v-for="good in item.goods" :goods="good" :key="good.id" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
