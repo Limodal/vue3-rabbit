@@ -6,10 +6,11 @@ import { onMounted } from "vue";
 
 export function useCategory (){
     const categoryData =ref({})
-const route =useRoute()
-const getCategory=async(id=route.params.id)=>{
-  const res=await getCategoryAPI(id)
-  categoryData.value=res.result
+    const route =useRoute()
+    const getCategory=async(id=route.params.id)=>{
+    const res=await getCategoryAPI(id)
+    // console.log("2222",res)
+    categoryData.value=res.result
 }
 
 onMounted(()=>{
