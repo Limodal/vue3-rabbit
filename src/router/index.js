@@ -34,6 +34,11 @@ const router = createRouter({
       component : Login
     }
   ],
+  // 添加路由行为定制配置
+  scrollBehavior(){
+    return { top: 0 }
+    // 在切换到另一个路由时，吗，默认滚动到页面顶部
+  }
 })
 
 export default router
