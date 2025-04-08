@@ -41,6 +41,22 @@ const tabChange = () => {
   // 这边因为接口问题，页面没有改变，但是传的参数已经改变了
   getSubCategoryData();
 };
+
+// 加载更多数据 方便实现无限加载
+const disabled = ref(false);
+const load=async()=>{
+  console.log('加载更多数据')
+  // 获取下一页数据
+  reqData.value.page++
+  const res=await getSubCategoryAPI(reqData.value)
+  // 将老数据和新数据进行拼接
+  goodsList.value=[...goodsList.value,...res.result.items]
+  // 加载完毕   停止监听
+  if(res.result.items.length==0){
+    // 停止监听
+    disabled.value=true
+  }
+}
 </script>
 
 <template>
@@ -55,12 +71,12 @@ const tabChange = () => {
       </el-breadcrumb>
     </div>
     <div class="sub-container">
-      <el-tabs v-model="reqData.sortField" @tab-change="tabChange()">
+      <el-tabs v-model="reqData.sortField" @tab-change="tabChange">
         <el-tab-pane label="最新商品" name="publishTime"></el-tab-pane>
         <el-tab-pane label="最高人气" name="orderNum"></el-tab-pane>
         <el-tab-pane label="评论最多" name="evaluateNum"></el-tab-pane>
       </el-tabs>
-      <div class="body">
+      <div class="body" v-infinite-scroll="load" :infinite-scroll-disavble="disabled">
          <!-- 商品列表-->
           <GoodsItem v-for="goods in goodsList" :goods="goods" :key="goods.id"/>
       </div>
